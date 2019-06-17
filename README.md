@@ -11,7 +11,7 @@ To use this package at all, you must have separately installed the [eWise Aegis 
 Once you have secured your access, use the package manager [npm](https://www.npmjs.com/) to install aegisJS.
 
 ```bash
-npm install aegisJS
+npm install @ewise/aegisjs-ota
 ```
 
 Alternatively, you can download the aegisJS file from the eWise CDN (to be hosted).
