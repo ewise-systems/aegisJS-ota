@@ -6,7 +6,7 @@ const chooseInstitutionAndAggregate = async () => {
     const otaUrl = prompt("Please enter an OTA URL");
     if(!appId || !appSecret || !uname || !email) return;
 
-    const aegis = ewise_aegisJS({
+    const aegis = ewise_aegis_ota({
         appId,
         appSecret,
         uname,

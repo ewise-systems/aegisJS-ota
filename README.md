@@ -18,25 +18,31 @@ Alternatively, you can download the aegisJS file from the eWise CDN (to be hoste
 
 ## Usage
 
-When requiring aegisJS in the browser, the library is available through the `ewise_aegisJS` function. When called, this returns the `aegis` object which can talk to the eWise PDV.
+When requiring aegisJS in the browser, the library is available through the `ewise_aegis_ota` function. When called, this returns the `aegis` object which can talk to the eWise PDV.
 
 ```javascript
-const aegis = ewise_aegisJS();
+const aegis = ewise_aegis_ota({
+    appId: "",
+    appSecret: "",
+    username: "",
+    email: "",
+    otaUrl: "",
+});
 
-aegis.getDetails("http://localhost:8000").run();
+aegis.getInstitutions().run();
 ```
 
 This library returns Task monads for one-off requests to the Aegis PDV and RxJS streams for continuous requests. In the case of a Task monad being returned, it can be converted to a promise should you be more comfortable in that style. However, it is recommended to use the monadic style instead of the promise.
 
 ```javascript
 // Monadic implementation
-aegis.getDetails("http://localhost:8000").run().listen({
+aegis.getInstitutions().run().listen({
     onRejected: errorCallback,
     onResolved: successCallback
 });
 
 // Promise-based implementation
-aegis.getDetails("http://localhost:8000").run().promise()
+aegis.getInstitutions().run().promise()
     .then(successCallback)
     .catch(errorCallback);
 ```
@@ -46,13 +52,18 @@ aegis.getDetails("http://localhost:8000").run().promise()
 When run, this example will output the data twice: once for the monadic approach, and again for the promise-based approach.
 
 ```javascript
-const aegis = ewise_aegisJS();
-const input = /* Contains a valid eWise-issued JWT */;
+const aegis = ewise_aegis_ota({
+    appId: "",
+    appSecret: "",
+    username: "",
+    email: "",
+    otaUrl: "",
+});
 
 const errorCallback = msg => error => console.log(`Error Encountered from ${msg}:`, error);
 const successCallback = msg => data => console.log(`Data Received from ${msg}:`, data);
 
-const details = aegis.getDetails(input);
+const details = aegis.getInstitutions();
 
 // Monadic Implementation
 details.run().listen({
@@ -70,9 +81,9 @@ details
 
 For more concrete examples, take a look at the `samples/` folder. You can execute these functions by running `npm start` and visiting `localhost:3000`. These functions, as well as the `aegis` object, should be available in the global scope for you to play with and learn from.
 
-## ewise_aegisJS
+## ewise_aegis_ota
 
-### ewise_aegisJS(options)
+### ewise_aegis_ota(options)
 
 This function wraps the `aegis` object and controls how it is instantiated.
 
@@ -81,24 +92,6 @@ This function wraps the `aegis` object and controls how it is instantiated.
 * Returns: `AegisObject`
 
 ## AegisObject
-
-### getDetails([accessPoint])
-
-The function is called with either a URL or a JWT because a JWT is not required to learn the running PDV's version as long as you know the URL to that PDV instance.
-
-* `accessPoint` \<String> A URL to connect to a local or remote running PDV instance, or a valid eWise-issued JWT that contains this URL.
-* Returns: `Task(Error, AegisDetailsObjectResult)`
-
-##### AegisDetailsObjectResult
-* `aegis` \<String> The version of the aegis instance.
-* `engine` \<String> The version of the engine instance.
-
-### runBrowser([accessPoint])
-
-Calling this function does not do anything, but it is useful to test that the JxBrowser installation is successful. This will open a JxBrowser instance in the local device.
-
-* `accessPoint` \<String> A URL to connect to a local or remote running PDV instance, or a valid eWise-issued JWT that contains this URL.
-* Returns: `Task(Error, EmptyObject)`
 
 ### getInstitutions([instCode[, jwt]])
 

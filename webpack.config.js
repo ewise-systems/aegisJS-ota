@@ -7,7 +7,7 @@ module.exports = {
   output: {
     filename: "aegis.js",
     path: path.resolve(__dirname, "dist"),
-    library: "ewise_aegisJS",
+    library: "ewise_aegis_ota",
   },
   resolve: {
     extensions: [".js", ".json"]
