@@ -1,18 +1,28 @@
 const chooseInstitutionAndAggregate = async () => {
-    const appId = prompt("Please enter an APP ID");
-    const appSecret = prompt("Please enter an APP SECRET");
-    const uname = prompt("Please enter a USERNAME");
-    const email = prompt("Please enter an EMAIL ADDRESS");
-    const otaUrl = prompt("Please enter an OTA URL");
-    if(!appId || !appSecret || !uname || !email) return;
+    const choice = prompt("JWT (1) or App ID (2)? Enter your choice.");
+    let aegis;
 
-    const aegis = ewise_aegis_ota({
-        appId,
-        appSecret,
-        uname,
-        email,
-        otaUrl
-    });
+    switch(choice) {
+        case "1":
+            aegis = ewise_aegis_ota({
+                jwt: prompt("Please enter a JWT")
+            });
+        break;
+        case "2":
+            aegis = ewise_aegis_ota({
+                appId: prompt("Please enter an APP ID"),
+                appSecret: prompt("Please enter an APP SECRET"),
+                uname: prompt("Please enter a USERNAME"),
+                email: prompt("Please enter an EMAIL ADDRESS"),
+                otaUrl: prompt("Please enter an OTA URL")
+            });
+        break;
+        default:
+            const errMsg = "Invalid choice!";
+            alert(errMsg);
+            throw Error(errMsg);
+    }
+    
     const institutionsResult = aegis.getInstitutions();
     const data = await institutionsResult.run().promise();
 

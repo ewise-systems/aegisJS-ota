@@ -30,7 +30,7 @@
     "webpack-cli": "^3.3.0"
   },
   "dependencies": {
-    "@ewise/aegisjs-core": "0.0.3",
+    "@ewise/aegisjs-core": "file:../aegisjs-core",
     "ramda": "^0.26.1",
     "rimraf": "^2.6.3",
     "rxjs": "^6.5.1",
