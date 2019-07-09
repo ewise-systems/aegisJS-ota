@@ -2,7 +2,7 @@ const uniqid = require("uniqid");
 const { compose } = require("ramda");
 const { BehaviorSubject } = require("rxjs");
 const { toObservable } = require("@ewise/aegisjs-core/frpcore/transforms");
-const { requestToAegisOTA, requestToAegisWithToken } = require("@ewise/aegisjs-core/hof/requestToAegis");
+const { requestToAegisOTA, requestToAegisServerWithToken } = require("@ewise/aegisjs-core/hof/requestToAegis");
 const { kickstart$: createStream$ } = require("@ewise/aegisjs-core/hos/pollingCore");
 const { safeMakeWebUrl } = require("@ewise/aegisjs-core/fpcore/safeOps");
 
@@ -29,11 +29,11 @@ const TERMINAL_PDV_STATES = ["error", "partial", "stopped", "done"];
 const stopStreamCondition = ({ status }) => TERMINAL_PDV_STATES.indexOf(status) === -1;
 
 const requestToAegisSwitch = (method, jwt, xheaders, body, path) =>
-    jwt ? requestToAegisWithToken(
+    jwt ? requestToAegisServerWithToken(
         method,                                                 // Method
         jwt,                                                    // JWT
         body,                                                   // Body
-        path                                                    // Path
+        path                                                    // Full Url
     ) : requestToAegisOTA(
         method,                                                 // Method
         xheaders,                                               // X-Headers
