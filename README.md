@@ -1,4 +1,4 @@
-# aegisJS
+# aegisJS-ota
 
 [![Build Status](https://travis-ci.org/ewise-systems/aegisJS.svg?branch=develop)](https://travis-ci.org/ewise-systems/aegisJS) [![Contributor Covenant](https://img.shields.io/badge/Contributor%20Covenant-v1.4%20adopted-ff69b4.svg)](code-of-conduct.md) [![dependencies Status](https://david-dm.org/ewise-systems/aegisJS/status.svg)](https://david-dm.org/ewise-systems/aegisJS)
 
@@ -26,6 +26,17 @@ const aegis = ewise_aegis_ota({
     appSecret: "",
     username: "",
     email: "",
+    otaUrl: "",
+});
+
+aegis.getInstitutions().run();
+```
+
+Alternatively, you can supply an Orca-issued JWT instead.
+
+```javascript
+const aegis = ewise_aegis_ota({
+    jwt: "",
     otaUrl: "",
 });
 
@@ -85,20 +96,26 @@ For more concrete examples, take a look at the `samples/` folder. You can execut
 
 ### ewise_aegis_ota(options)
 
-This function wraps the `aegis` object and controls how it is instantiated.
+This function wraps the `aegis` object and controls how it is instantiated. It will use either JWT or x-headers authentication. If a JWT is supplied, it is used regardless of the other parameters. If the x-headers are supplied all four must be simultaneously provided. Either way, the url to the OTA server is a mandatory parameter.
 
 * `options` \<Object>
+  * `otaUrl` \<String> **Required**. The base URL to the OTA server to connect with.
   * `jwt` \<String> When provided, this is the JWT that will be used for all requests, unless specifically overriden in the function's parameters.
+  * `appId` \<String> One of the four x-headers to mark the application ID.
+  * `appSecret` \<String> One of the four x-headers to mark the application secret.
+  * `username` \<String> One of the four x-headers to mark the user's username.
+  * `email` \<String> One of the four x-headers to mark the user's email.
 * Returns: `AegisObject`
 
 ## AegisObject
 
-### getInstitutions([instCode[, jwt]])
+### getInstitutions([options])
 
 The institutions returned here are those that were made available to the client and can be aggregated with the proper credentials.
 
-* `instCode` \<String> An institution code that is registered in the eWise PDV.
-* `jwt` \<String> A valid eWise-issued JWT.
+* `options` \<Object>
+  * `instCode` \<String> An institution code that is registered in the eWise PDV.
+  * `jwt` \<String> A valid eWise-issued JWT. Default: `defaultJwt`
 * Returns: `Task(Error, GroupInstitutionsObject | OneInstitutionObject)`
 
 ##### GroupInstitutionsObject
@@ -128,14 +145,15 @@ The institutions returned here are those that were made available to the client 
 * `value` \<Boolean> A default value that must be updated with a user-supplied input if the prompt is editable.
 * `type` \<Boolean> Can be `lov` (list of values), `input` (string), `image` (base64 image data string), and `password` (sensitive string).
 
-### initializeOta(instCode, prompts[, jwt])
+### initializeOta([options])
 
 Returns an object that can get valid institutions for data aggregation and their prompts, as well as provide means to start, stop and resume the aggregation.
 
-* `instCode` \<String> An institution code that is registered in the eWise PDV.
-* `prompts` Array\<Prompt> An array of objects. Each object is made of a `key` corresponding to the `key` returned in `getInstitutions`, and a `value` corresponding to the user-supplied credentials for that key.
-* `jwt` \<String> A valid eWise-issued JWT.
-* Returns: `OTAControlObject`
+* `options` \<Object>
+  * `instCode` \<String> An institution code that is registered in the eWise PDV.
+  * `prompts` Array\<Prompt> An array of objects. Each object is made of a `key` corresponding to the `key` returned in `getInstitutions`, and a `value` corresponding to the user-supplied credentials for that key.
+  * `jwt` \<String> A valid eWise-issued JWT. Default: `defaultJwt`
+* Returns: `StreamControlObject`
 
 ## OTAControlObject
 
