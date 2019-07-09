@@ -1,6 +1,6 @@
 {
   "name": "@ewise/aegisjs-ota",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Open source library for doing One Time Aggregation with eWise Systems' Aegis 2.0 architecture",
   "main": "src/aegis.js",
   "scripts": {
