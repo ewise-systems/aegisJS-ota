@@ -5,7 +5,8 @@ const chooseInstitutionAndAggregate = async () => {
     switch(choice) {
         case "1":
             aegis = ewise_aegis_ota({
-                jwt: prompt("Please enter a JWT")
+                jwt: prompt("Please enter a JWT"),
+                otaUrl: prompt("Please enter an OTA URL")
             });
         break;
         case "2":
