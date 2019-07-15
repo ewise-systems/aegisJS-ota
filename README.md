@@ -100,11 +100,14 @@ This function wraps the `aegis` object and controls how it is instantiated. It w
 
 * `options` \<Object>
   * `otaUrl` \<String> **Required**. The base URL to the OTA server to connect with.
-  * `jwt` \<String> When provided, this is the JWT that will be used for all requests, unless specifically overriden in the function's parameters.
+  * `jwt` \<String> When provided, this is the JWT that will be used for all requests, unless specifically overriden in the function's parameters. This becomes `defaultJwt`
   * `appId` \<String> One of the four x-headers to mark the application ID.
   * `appSecret` \<String> One of the four x-headers to mark the application secret.
   * `username` \<String> One of the four x-headers to mark the user's username.
   * `email` \<String> One of the four x-headers to mark the user's email.
+  * `timeout` \<Number> Number of milliseconds to declare that a request has timed out. This becomes `defaultTimeout`. Default: 90,000
+  * `retryLimit` \<Number> The number of retries to be attempted when polling. This becomes `defaultRetryLimit`. Default: 5
+  * `retryDelay` \<Number> The number of milliseconds to wait after a failure before trying again. This becomes `defaultRetryDelay`. Default: 5,000
 * Returns: `AegisObject`
 
 ## AegisObject
@@ -116,6 +119,7 @@ The institutions returned here are those that were made available to the client 
 * `options` \<Object>
   * `instCode` \<String> An institution code that is registered in the eWise PDV.
   * `jwt` \<String> A valid eWise-issued JWT. Default: `defaultJwt`
+  * `timeout` \<Number> Number of milliseconds to declare that a request has timed out. Default: `defaultTimeout`
 * Returns: `Task(Error, GroupInstitutionsObject | OneInstitutionObject)`
 
 ##### GroupInstitutionsObject
@@ -153,6 +157,9 @@ Returns an object that can get valid institutions for data aggregation and their
   * `instCode` \<String> An institution code that is registered in the eWise PDV.
   * `prompts` Array\<Prompt> An array of objects. Each object is made of a `key` corresponding to the `key` returned in `getInstitutions`, and a `value` corresponding to the user-supplied credentials for that key.
   * `jwt` \<String> A valid eWise-issued JWT. Default: `defaultJwt`
+  * `timeout` \<Number> Number of milliseconds to declare that a request has timed out. Default: `defaultTimeout`
+  * `retryLimit` \<Number> The number of retries to be attempted when polling. Default `defaultRetryLimit`
+  * `retryDelay` \<Number> The number of milliseconds to wait after a failure before trying again. Default: `defaultRetryDelay`
 * Returns: `StreamControlObject`
 
 ## OTAControlObject

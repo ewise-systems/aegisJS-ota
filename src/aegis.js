@@ -3,8 +3,12 @@ const { compose } = require("ramda");
 const { BehaviorSubject } = require("rxjs");
 const { toObservable } = require("@ewise/aegisjs-core/frpcore/transforms");
 const { requestToAegisOTA, requestToAegisServerWithToken } = require("@ewise/aegisjs-core/hof/requestToAegis");
-const { kickstart$: createStream$ } = require("@ewise/aegisjs-core/hos/pollingCore");
+const { kickstart$: initPollingStream } = require("@ewise/aegisjs-core/hos/pollingCore");
 const { safeMakeWebUrl } = require("@ewise/aegisjs-core/fpcore/safeOps");
+
+const DEFAULT_REQUEST_TIMEOUT = 90000; //ms
+const DEFAULT_RETY_LIMIT = 5;
+const DEFAULT_DELAY_BEFORE_RETRY = 5000; //ms
 
 const HTTP_VERBS = {
     GET: "GET",
@@ -24,20 +28,18 @@ const PDV_PATHS = otaUrl => {
     };
 };
 
-const TERMINAL_PDV_STATES = ["error", "partial", "stopped", "done"];
-
-const stopStreamCondition = ({ status }) => TERMINAL_PDV_STATES.indexOf(status) === -1;
-
-const requestToAegisSwitch = (method, jwt, xheaders, body, path) =>
+const requestToAegisSwitch = (method, jwt, xheaders, body, timeout, path) =>
     jwt ? requestToAegisServerWithToken(
         method,                                                 // Method
         jwt,                                                    // JWT
         body,                                                   // Body
+        timeout,                                                // Timeout
         path                                                    // Full Url
     ) : requestToAegisOTA(
         method,                                                 // Method
         xheaders,                                               // X-Headers
         body,                                                   // Body
+        timeout,                                                // Timeout
         path                                                    // Full Url
     );
 
@@ -48,7 +50,10 @@ const aegis = (options = {}) => {
         appSecret: defaultAppSecret,
         uname: defaultUname,
         email: defaultEmail,
-        jwt: defaultJwt
+        jwt: defaultJwt,
+        timeout: defaultTimeout = DEFAULT_REQUEST_TIMEOUT,
+        retryLimit: defaultRetryLimit = DEFAULT_RETY_LIMIT,
+        retryDelay: defaultRetryDelay = DEFAULT_DELAY_BEFORE_RETRY
     } = options;
 
     return {
@@ -60,7 +65,8 @@ const aegis = (options = {}) => {
                 appSecret = defaultAppSecret,
                 uname = defaultUname,
                 email = defaultEmail,
-                jwt = defaultJwt
+                jwt = defaultJwt,
+                timeout = defaultTimeout
             } = args;
 
             return requestToAegisSwitch (
@@ -68,6 +74,7 @@ const aegis = (options = {}) => {
                 jwt,
                 { appId, appSecret, uname, email },
                 null,
+                timeout,
                 PDV_PATHS(otaUrl).GET_INSTITUTIONS(instCode)
             );
         },
@@ -81,8 +88,14 @@ const aegis = (options = {}) => {
                 appSecret = defaultAppSecret,
                 uname = defaultUname,
                 email = defaultEmail,
-                jwt = defaultJwt
+                jwt = defaultJwt,
+                timeout = defaultTimeout,
+                retryLimit = defaultRetryLimit,
+                retryDelay = defaultRetryDelay
             } = args;
+
+            const TERMINAL_PDV_STATES = ["error", "partial", "stopped", "done"];
+            const stopStreamCondition = arg => arg ? TERMINAL_PDV_STATES.indexOf(arg.status) === -1 : false;
 
             const xheaders = { appId, appSecret, uname, email };
             const paths = PDV_PATHS(otaUrl);
@@ -97,6 +110,7 @@ const aegis = (options = {}) => {
                 jwt,
                 xheaders,
                 bodyCsrf,
+                timeout,
                 PDV_PATHS(otaUrl).START_OTA
             );
 
@@ -105,12 +119,14 @@ const aegis = (options = {}) => {
                 jwt,
                 xheaders,
                 null,
+                timeout,
                 PDV_PATHS(otaUrl).QUERY_OTA(pid, csrf)
             );
 
             const initialStream$ = compose(toObservable, startAegisOTA);
             const pollingStream$ = compose(toObservable, checkAegisOTA);
-            const stream$ = createStream$(stopStreamCondition, initialStream$, pollingStream$);
+            const createStream = initPollingStream(retryLimit, retryDelay);
+            const stream$ = createStream(stopStreamCondition, initialStream$, pollingStream$);
 
             return {
                 run: () =>
@@ -125,6 +141,7 @@ const aegis = (options = {}) => {
                         jwt,
                         xheaders,
                         { ...otp, challenge: csrf },
+                        timeout,
                         paths.RESUME_OTA(subject$.getValue().processId)
                     ),
                 stop: () =>
@@ -133,6 +150,7 @@ const aegis = (options = {}) => {
                         jwt,
                         xheaders,
                         null,
+                        timeout,
                         paths.STOP_OTA(subject$.getValue().processId, csrf)
                     )
             };
