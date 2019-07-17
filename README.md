@@ -100,14 +100,15 @@ This function wraps the `aegis` object and controls how it is instantiated. It w
 
 * `options` \<Object>
   * `otaUrl` \<String> **Required**. The base URL to the OTA server to connect with.
-  * `jwt` \<String> When provided, this is the JWT that will be used for all requests, unless specifically overriden in the function's parameters. This becomes `defaultJwt`
-  * `appId` \<String> One of the four x-headers to mark the application ID.
-  * `appSecret` \<String> One of the four x-headers to mark the application secret.
-  * `username` \<String> One of the four x-headers to mark the user's username.
-  * `email` \<String> One of the four x-headers to mark the user's email.
-  * `timeout` \<Number> Number of milliseconds to declare that a request has timed out. This becomes `defaultTimeout`. Default: 90,000
-  * `retryLimit` \<Number> The number of retries to be attempted when polling. This becomes `defaultRetryLimit`. Default: 5
-  * `retryDelay` \<Number> The number of milliseconds to wait after a failure before trying again. This becomes `defaultRetryDelay`. Default: 5,000
+  * `jwt` \<String> **Optional**. When provided, this is the JWT that will be used for all requests, unless specifically overriden in the function's parameters. This becomes `defaultJwt`
+  * `appId` \<String> **Required if no JWT**. One of the four x-headers to mark the application ID.
+  * `appSecret` \<String> **Required if no JWT**. One of the four x-headers to mark the application secret.
+  * `username` \<String> **Required if no JWT**. One of the four x-headers to mark the user's username.
+  * `email` \<String> **Required if no JWT**. One of the four x-headers to mark the user's email.
+  * `timeout` \<Number> **Optional**. Number of milliseconds to declare that a request has timed out. This becomes `defaultTimeout`. Default: 90,000
+  * `retryLimit` \<Number> **Optional**. The number of retries to be attempted when polling. This becomes `defaultRetryLimit`. Default: 5
+  * `retryDelay` \<Number> **Optional**. The number of milliseconds to wait after a failure before trying again. This becomes `defaultRetryDelay`. Default: 5,000
+  * `withTransactions` \<Boolean> **Optional**. Run aggregation with transactions. Default: `true`
 * Returns: `AegisObject`
 
 ## AegisObject
