@@ -54,7 +54,8 @@ const aegis = (options = {}) => {
         jwt: defaultJwt,
         timeout: defaultTimeout = DEFAULT_REQUEST_TIMEOUT,
         retryLimit: defaultRetryLimit = DEFAULT_RETY_LIMIT,
-        retryDelay: defaultRetryDelay = DEFAULT_DELAY_BEFORE_RETRY
+        retryDelay: defaultRetryDelay = DEFAULT_DELAY_BEFORE_RETRY,
+        ajaxTaskFn: defaultAjaxTaskFn = requestToAegisSwitch
     } = options;
 
     return {
@@ -67,10 +68,11 @@ const aegis = (options = {}) => {
                 uname = defaultUname,
                 email = defaultEmail,
                 jwt = defaultJwt,
-                timeout = defaultTimeout
+                timeout = defaultTimeout,
+                ajaxTaskFn = defaultAjaxTaskFn
             } = args;
 
-            return requestToAegisSwitch (
+            return ajaxTaskFn(
                 HTTP_VERBS.GET,
                 jwt,
                 { appId, appSecret, uname, email },
@@ -93,7 +95,8 @@ const aegis = (options = {}) => {
                 timeout = defaultTimeout,
                 retryLimit = defaultRetryLimit,
                 retryDelay = defaultRetryDelay,
-                withTransactions: transactions = DEFAULT_AGGREGATE_WITH_TRANSACTIONS
+                withTransactions: transactions = DEFAULT_AGGREGATE_WITH_TRANSACTIONS,
+                ajaxTaskFn = defaultAjaxTaskFn
             } = args;
 
             const TERMINAL_PDV_STATES = ["error", "partial", "stopped", "done"];
@@ -107,7 +110,7 @@ const aegis = (options = {}) => {
             const csrf = uniqid();
             const bodyCsrf = { code: instCode, prompts, challenge: csrf, transactions };
 
-            const startAegisOTA = () => requestToAegisSwitch(
+            const startAegisOTA = () => ajaxTaskFn(
                 HTTP_VERBS.POST,
                 jwt,
                 xheaders,
@@ -116,7 +119,7 @@ const aegis = (options = {}) => {
                 PDV_PATHS(otaUrl).START_OTA
             );
 
-            const checkAegisOTA = pid => requestToAegisSwitch(
+            const checkAegisOTA = pid => ajaxTaskFn(
                 HTTP_VERBS.GET,
                 jwt,
                 xheaders,
@@ -138,7 +141,7 @@ const aegis = (options = {}) => {
                         () => subject$.complete(subject$.getValue())
                     ) && subject$,
                 resume: otp =>
-                    requestToAegisSwitch(
+                    ajaxTaskFn(
                         HTTP_VERBS.POST,
                         jwt,
                         xheaders,
@@ -147,7 +150,7 @@ const aegis = (options = {}) => {
                         paths.RESUME_OTA(subject$.getValue().processId)
                     ),
                 stop: () =>
-                    requestToAegisSwitch(
+                    ajaxTaskFn(
                         HTTP_VERBS.DELETE,
                         jwt,
                         xheaders,

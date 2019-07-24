@@ -109,6 +109,7 @@ This function wraps the `aegis` object and controls how it is instantiated. It w
   * `retryLimit` \<Number> **Optional**. The number of retries to be attempted when polling. This becomes `defaultRetryLimit`. Default: 5
   * `retryDelay` \<Number> **Optional**. The number of milliseconds to wait after a failure before trying again. This becomes `defaultRetryDelay`. Default: 5,000
   * `withTransactions` \<Boolean> **Optional**. Run aggregation with transactions. Default: `true`
+  * `ajaxTaskFn` \<Function> **Optional**. A function that takes six arguments (`HTTP METHOD`, `nullable jwt`, `nullable xheaders`, `nullable body`, `timeout in ms`, `URI or URI Path`) and returns a monad, to overwrite the library's default AJAX implementation. This becomes `defaultAjaxTaskFn`
 * Returns: `AegisObject`
 
 ## AegisObject
@@ -121,6 +122,7 @@ The institutions returned here are those that were made available to the client 
   * `instCode` \<String> An institution code that is registered in the eWise PDV.
   * `jwt` \<String> A valid eWise-issued JWT. Default: `defaultJwt`
   * `timeout` \<Number> Number of milliseconds to declare that a request has timed out. Default: `defaultTimeout`
+  * `ajaxTaskFn` \<Function> **Optional**. A function that takes six arguments (`HTTP METHOD`, `nullable jwt`, `nullable xheaders`, `nullable body`, `timeout in ms`, `URI or URI Path`) and returns a monad, to overwrite the library's default AJAX implementation. Default: `defaultAjaxTaskFn`
 * Returns: `Task(Error, GroupInstitutionsObject | OneInstitutionObject)`
 
 ##### GroupInstitutionsObject
@@ -158,9 +160,10 @@ Returns an object that can get valid institutions for data aggregation and their
   * `instCode` \<String> An institution code that is registered in the eWise PDV.
   * `prompts` Array\<Prompt> An array of objects. Each object is made of a `key` corresponding to the `key` returned in `getInstitutions`, and a `value` corresponding to the user-supplied credentials for that key.
   * `jwt` \<String> A valid eWise-issued JWT. Default: `defaultJwt`
-  * `timeout` \<Number> Number of milliseconds to declare that a request has timed out. Default: `defaultTimeout`
-  * `retryLimit` \<Number> The number of retries to be attempted when polling. Default `defaultRetryLimit`
-  * `retryDelay` \<Number> The number of milliseconds to wait after a failure before trying again. Default: `defaultRetryDelay`
+  * `timeout` \<Number> **Optional**. Number of milliseconds to declare that a request has timed out. Default: `defaultTimeout`
+  * `retryLimit` \<Number> **Optional**. The number of retries to be attempted when polling. Default `defaultRetryLimit`
+  * `retryDelay` \<Number> **Optional**. The number of milliseconds to wait after a failure before trying again. Default: `defaultRetryDelay`
+  * `ajaxTaskFn` \<Function> **Optional**. A function that takes six arguments (`HTTP METHOD`, `nullable jwt`, `nullable xheaders`, `nullable body`, `timeout in ms`, `URI or URI Path`) and returns a monad, to overwrite the library's default AJAX implementation. Default: `defaultAjaxTaskFn`
 * Returns: `StreamControlObject`
 
 ## OTAControlObject
