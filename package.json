@@ -9,7 +9,7 @@
     "bundle": "webpack --config webpack.config.js",
     "prebuild": "npm run clean",
     "build": "npm run bundle",
-    "start": "npm run build && node srv/testApp.js"
+    "demo-app": "npm run build && node demo-app/testApp.js"
   },
   "keywords": [
     "ewise",
@@ -30,7 +30,7 @@
     "webpack-cli": "^3.3.0"
   },
   "dependencies": {
-    "@ewise/aegisjs-core": "0.1.2",
+    "@ewise/aegisjs-core": "0.1.10",
     "ramda": "^0.26.1",
     "rimraf": "^2.6.3",
     "rxjs": "^6.5.1",
