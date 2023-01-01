@@ -26,8 +26,8 @@
     "jshint": "^2.10.2",
     "lodash": "^4.17.11",
     "source-map-support": "^0.5.12",
-    "webpack": "^4.30.0",
-    "webpack-cli": "^3.3.0"
+    "webpack": "^5.75.0",
+    "webpack-cli": "^5.0.1"
   },
   "dependencies": {
     "@ewise/aegisjs-core": "0.1.10",
